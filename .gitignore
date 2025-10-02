@@ -1,0 +1,60 @@
+# === Unity ===
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+UserSettings/        # keep user-local settings out of git
+Recordings/
+SysRoot/
+*.pidb
+*.booproj
+*.suo
+*.user
+*.userprefs
+*.csproj
+*.unityproj
+*.sln
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+*.asmdef.meta
+.crash
+*.swp
+
+# Rider / VS / VSCode
+.idea/
+.vscode/
+.vs/
+*.DotSettings.user
+
+# Gradle / Android
+.gradle/
+*.apk
+*.aab
+*.keystore
+
+# iOS / Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+
+# Unity Cloud / Cache
+Cache/
+*.unitypackage
+
+# TextMeshPro auto-generated (safe to regen)
+Assets/TextMesh Pro/**/Resources/*.asset
+
+# Keep these! (Unity project files)
+!Assets/
+!ProjectSettings/
+!Packages/
+!Packages/manifest.json
+!Packages/packages-lock.json
+
