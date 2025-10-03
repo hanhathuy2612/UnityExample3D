@@ -3,5 +3,7 @@ using UnityEngine;
 
 public static class AnimatorParameters
 {
-    public const String Speed = "Speed";
+    public const string Speed = "Speed";
+    public const string Jump = "Jump";
+    public const string Punch = "Punch";
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerTransition : MonoBehaviour
@@ -16,8 +17,21 @@ public class PlayerTransition : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        float speed = new Vector3(_rigidbody.linearVelocity.x, 0f, _rigidbody.linearVelocity.z).magnitude;
-        Debug.Log(speed);
+        var speed = new Vector3(_rigidbody.linearVelocity.x, 0f, _rigidbody.linearVelocity.z).magnitude;
         _animator.SetFloat(AnimatorParameters.Speed, speed);
+
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            var state = _animator.GetCurrentAnimatorStateInfo(0);
+            if (!state.IsName(AnimatorParameters.Jump))
+            {
+                _animator.SetTrigger(AnimatorParameters.Jump);
+            }
+        }
+
+        if (Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            _animator.SetTrigger(AnimatorParameters.Punch);
+        }
     }
 }

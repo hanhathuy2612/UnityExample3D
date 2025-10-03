@@ -5,13 +5,14 @@ using UnityEngine.InputSystem;
 public class PlayerMoveToCamera : MonoBehaviour
 {
     [Header("Move")] [SerializeField] private float maxSpeed = 6f;
-    [SerializeField] float accel = 20f;
+    [SerializeField] private float accel = 20f;
 
     [Header("Rotate")] [SerializeField] private float turnSpeed = 10f; // độ/giây
 
     private Rigidbody _rb;
     private Vector3 _inputDir;
     private Camera _camera;
+    private float _actualSpeed;
 
     private void Awake()
     {
@@ -36,28 +37,49 @@ public class PlayerMoveToCamera : MonoBehaviour
         var cam = _camera ? _camera.transform : null;
         if (cam)
         {
-            Vector3 fwd = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;
-            Vector3 right = Vector3.ProjectOnPlane(cam.right, Vector3.up).normalized;
+            var fwd = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;
+            var right = Vector3.ProjectOnPlane(cam.right, Vector3.up).normalized;
             _inputDir = (right * x + fwd * z).normalized;
         }
         else
         {
             _inputDir = new Vector3(x, 0f, z).normalized;
         }
+
+        // Press and hold shift key to speed up
+        if (Keyboard.current.shiftKey.isPressed)
+        {
+            _actualSpeed = maxSpeed * 2f;
+        }
+        else
+        {
+            _actualSpeed = maxSpeed;
+        }
     }
 
     private void FixedUpdate()
     {
-        Vector3 targetVel = _inputDir * maxSpeed;
-        Vector3 horizVel = Vector3.ProjectOnPlane(_rb.linearVelocity, Vector3.up);
-        Vector3 needed = targetVel - horizVel;
-        _rb.AddForce(needed * accel, ForceMode.Acceleration);
+        Move();
+        TurnAround();
+    }
 
-        if (_inputDir.sqrMagnitude > 0.0001f)
+    private void Move()
+    {
+        var targetVel = _inputDir * _actualSpeed;
+        var horizVel = Vector3.ProjectOnPlane(_rb.linearVelocity, Vector3.up);
+        var needed = targetVel - horizVel;
+        _rb.AddForce(needed * accel, ForceMode.Acceleration);
+    }
+
+    private void TurnAround()
+    {
+        if (_inputDir.sqrMagnitude <= 0.0001f)
         {
-            float yaw = Mathf.Atan2(_inputDir.x, _inputDir.z) * Mathf.Rad2Deg;
-            Quaternion targetRot = Quaternion.Euler(0f, yaw, 0f);
-            _rb.MoveRotation(Quaternion.RotateTowards(_rb.rotation, targetRot, turnSpeed * Time.fixedDeltaTime));
+            return;
         }
+
+        var yaw = Mathf.Atan2(_inputDir.x, _inputDir.z) * Mathf.Rad2Deg;
+        var targetRot = Quaternion.Euler(0f, yaw, 0f);
+        _rb.MoveRotation(Quaternion.RotateTowards(_rb.rotation, targetRot, turnSpeed * Time.fixedDeltaTime));
     }
 }
