@@ -13,7 +13,7 @@ public class PlayerMoveToCamera : MonoBehaviour
     private Vector3 _inputDir;
     private Camera _camera;
 
-    void Awake()
+    private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -22,7 +22,7 @@ public class PlayerMoveToCamera : MonoBehaviour
         _camera = Camera.main;
     }
 
-    void Update()
+    private void Update()
     {
         if (Keyboard.current == null)
         {
@@ -46,7 +46,7 @@ public class PlayerMoveToCamera : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         Vector3 targetVel = _inputDir * maxSpeed;
         Vector3 horizVel = Vector3.ProjectOnPlane(_rb.linearVelocity, Vector3.up);
