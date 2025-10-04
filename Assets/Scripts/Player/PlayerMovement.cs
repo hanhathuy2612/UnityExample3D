@@ -34,8 +34,8 @@ public class PlayerMovement : MonoBehaviour
         float z = (Keyboard.current.wKey.isPressed ? 1 : 0) - (Keyboard.current.sKey.isPressed ? 1 : 0);
         _inputDir = new Vector3(x, 0, z).normalized;
 
-        float speed = new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z).magnitude;
-        _anim?.SetFloat("Speed", speed);
+        var speed = new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z).magnitude;
+        _anim?.SetFloat(AnimatorParameters.Speed, speed);
     }
 
     private void FixedUpdate()
@@ -46,19 +46,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        Vector3 targetVel = _inputDir * maxSpeed;
-        Vector3 horizVel = Vector3.ProjectOnPlane(_rb.linearVelocity, Vector3.up);
-        Vector3 needed = targetVel - horizVel;
+        var targetVel = _inputDir * maxSpeed;
+        var horizVel = Vector3.ProjectOnPlane(_rb.linearVelocity, Vector3.up);
+        var needed = targetVel - horizVel;
         _rb.AddForce(needed * accel, ForceMode.Acceleration);
     }
 
     private void Rotate()
     {
-        if (_inputDir.sqrMagnitude > 0.0001f)
-        {
-            float yaw = Mathf.Atan2(_inputDir.x, _inputDir.z) * Mathf.Rad2Deg;
-            Quaternion targetRot = Quaternion.Euler(0f, yaw, 0f);
-            _rb.MoveRotation(Quaternion.RotateTowards(_rb.rotation, targetRot, turnSpeed * Time.fixedDeltaTime));
-        }
+        if (_inputDir.sqrMagnitude <= 0.0001f) return;
+        var yaw = Mathf.Atan2(_inputDir.x, _inputDir.z) * Mathf.Rad2Deg;
+        Quaternion targetRot = Quaternion.Euler(0f, yaw, 0f);
+        _rb.MoveRotation(Quaternion.RotateTowards(_rb.rotation, targetRot, turnSpeed * Time.fixedDeltaTime));
     }
 }

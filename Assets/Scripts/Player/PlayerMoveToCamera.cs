@@ -46,7 +46,7 @@ public class PlayerMoveToCamera : MonoBehaviour
             _inputDir = new Vector3(x, 0f, z).normalized;
         }
 
-        // Press and hold shift key to speed up
+        // Press and hold the shift key to speed up
         if (Keyboard.current.shiftKey.isPressed)
         {
             _actualSpeed = maxSpeed * 2f;
