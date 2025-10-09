@@ -20,14 +20,16 @@ public class PlayerMoveToCamera : MonoBehaviour
 
     [Header("Jump")]
     [Tooltip("Upward speed applied when jumping (m/s). If you prefer height, see notes below.")]
-    [SerializeField] private float jumpSpeed = 5f;
+    [SerializeField] private float jumpSpeed = 8f;
     [SerializeField] private float coyoteTime = 0.1f;       // grace period after leaving ground
     [SerializeField] private float jumpBufferTime = 0.1f;   // early button press buffer
     [SerializeField] private LayerMask groundMask = ~0;     // what counts as ground
 
     [Header("Ground Check")]
     [SerializeField] private float groundCheckRadius = 0.2f;
-    [SerializeField] private float groundCheckOffset = 0.05f;
+    [SerializeField] private float groundCheckOffset = 0.1f;
+    [SerializeField] private bool showGroundCheckDebug = true;
+    [SerializeField] private bool useSimpleGroundCheck = true;
 
     private Rigidbody rb;
     private Collider col;
@@ -145,6 +147,51 @@ public class PlayerMoveToCamera : MonoBehaviour
     // --- Ground Check ---
     private bool CheckGrounded()
     {
+        if (useSimpleGroundCheck)
+        {
+            return CheckGroundedSimple();
+        }
+        else
+        {
+            return CheckGroundedSphereCast();
+        }
+    }
+    
+    private bool CheckGroundedSimple()
+    {
+        // Simple ground check using multiple raycasts
+        Vector3 center = transform.position;
+        Vector3[] checkPoints = {
+            center,
+            center + Vector3.left * 0.3f,
+            center + Vector3.right * 0.3f,
+            center + Vector3.forward * 0.3f,
+            center + Vector3.back * 0.3f
+        };
+        
+        float checkDistance = 0.6f; // Distance to check below player
+        
+        foreach (Vector3 point in checkPoints)
+        {
+            if (Physics.Raycast(point, Vector3.down, checkDistance, groundMask, QueryTriggerInteraction.Ignore))
+            {
+                if (showGroundCheckDebug)
+                {
+                    Debug.DrawRay(point, Vector3.down * checkDistance, Color.green);
+                }
+                return true;
+            }
+            else if (showGroundCheckDebug)
+            {
+                Debug.DrawRay(point, Vector3.down * checkDistance, Color.red);
+            }
+        }
+        
+        return false;
+    }
+    
+    private bool CheckGroundedSphereCast()
+    {
         // Sphere cast from collider bottom down a tiny bit
         Bounds b = col.bounds;
         float radius = groundCheckRadius;
@@ -152,11 +199,25 @@ public class PlayerMoveToCamera : MonoBehaviour
 
         // Short cast to detect ground just below collider
         float castDistance = radius + groundCheckOffset;
-        if (Physics.SphereCast(origin, radius, Vector3.down, out RaycastHit hit, castDistance, groundMask, QueryTriggerInteraction.Ignore))
+        bool isGrounded = Physics.SphereCast(origin, radius, Vector3.down, out RaycastHit hit, castDistance, groundMask, QueryTriggerInteraction.Ignore);
+        
+        // Debug visualization
+        if (showGroundCheckDebug)
         {
-            return true;
+            Color debugColor = isGrounded ? Color.green : Color.red;
+            Debug.DrawRay(origin, Vector3.down * castDistance, debugColor);
+            
+            // Draw sphere at origin
+            Debug.DrawLine(origin + Vector3.left * radius, origin + Vector3.right * radius, debugColor);
+            Debug.DrawLine(origin + Vector3.forward * radius, origin + Vector3.back * radius, debugColor);
+            
+            if (isGrounded)
+            {
+                Debug.Log($"Grounded! Hit: {hit.collider.name} at distance: {hit.distance}");
+            }
         }
-        return false;
+        
+        return isGrounded;
     }
 
     // --- Optional helper: turn jump height into speed ---
