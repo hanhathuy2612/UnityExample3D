@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// Character controller that moves relative to the active camera,
+/// Character controller that moves in world space,
 /// accelerates toward a target horizontal velocity, rotates toward move direction,
 /// and supports buffered/coyote jumping with a Rigidbody.
 /// </summary>
@@ -10,17 +10,17 @@ using UnityEngine.InputSystem;
 public class PlayerMoveToCamera : MonoBehaviour
 {
     [Header("Move")]
-    [SerializeField] private float maxSpeed = 6f;
+    [SerializeField] private float maxSpeed = 2f;
     [SerializeField] private float acceleration = 20f;
     [SerializeField] private float sprintMultiplier = 1.8f;
 
     [Header("Rotate")]
-    [Tooltip("Degrees per second")]
-    [SerializeField] private float turnSpeed = 720f;
+    [Tooltip("Degrees per second - how fast player turns")]
+    [SerializeField] private float turnSpeed = 360f;
 
     [Header("Jump")]
     [Tooltip("Upward speed applied when jumping (m/s). If you prefer height, see notes below.")]
-    [SerializeField] private float jumpSpeed = 10f;
+    [SerializeField] private float jumpSpeed = 5f;
     [SerializeField] private float coyoteTime = 0.1f;       // grace period after leaving ground
     [SerializeField] private float jumpBufferTime = 0.1f;   // early button press buffer
     [SerializeField] private LayerMask groundMask = ~0;     // what counts as ground
@@ -30,7 +30,6 @@ public class PlayerMoveToCamera : MonoBehaviour
     [SerializeField] private float groundCheckOffset = 0.05f;
 
     private Rigidbody rb;
-    private Camera cam;
     private Collider col;
 
     // input state (from Update)
@@ -39,7 +38,6 @@ public class PlayerMoveToCamera : MonoBehaviour
     private bool sprintHeld;
 
     // derived / runtime
-    private Vector3 camRight, camForwardFlat;
     private float lastGroundedTime;
     private float lastJumpPressedTime;
 
@@ -51,7 +49,6 @@ public class PlayerMoveToCamera : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-        cam = Camera.main;
     }
 
     private void Update()
@@ -76,21 +73,6 @@ public class PlayerMoveToCamera : MonoBehaviour
             moveInput = Vector2.zero;
             sprintHeld = false;
         }
-
-        // --- Cache camera-relative axes (XZ only) ---
-        if (cam == null) cam = Camera.main;
-        if (cam != null)
-        {
-            var fwd = cam.transform.forward;
-            fwd.y = 0f;
-            camForwardFlat = fwd.sqrMagnitude > 0.0001f ? fwd.normalized : Vector3.forward;
-            camRight = Vector3.Cross(Vector3.up, camForwardFlat).normalized;
-        }
-        else
-        {
-            camForwardFlat = Vector3.forward;
-            camRight = Vector3.right;
-        }
     }
 
     private void FixedUpdate()
@@ -108,8 +90,8 @@ public class PlayerMoveToCamera : MonoBehaviour
     // --- Movement ---
     private void MoveHorizontal()
     {
-        // Desired horizontal direction (camera-relative)
-        Vector3 desiredDir = (camRight * moveInput.x + camForwardFlat * moveInput.y);
+        // Desired horizontal direction (world space)
+        Vector3 desiredDir = new Vector3(moveInput.x, 0f, moveInput.y);
         desiredDir = desiredDir.sqrMagnitude > 1f ? desiredDir.normalized : desiredDir;
 
         float targetSpeed = maxSpeed * (sprintHeld ? sprintMultiplier : 1f);
@@ -150,13 +132,13 @@ public class PlayerMoveToCamera : MonoBehaviour
     // --- Rotation ---
     private void TurnTowardMoveDirection()
     {
-        Vector3 planar = camRight * moveInput.x + camForwardFlat * moveInput.y;
+        Vector3 planar = new Vector3(moveInput.x, 0f, moveInput.y);
         if (planar.sqrMagnitude < 0.0001f) return;
 
         float targetYaw = Mathf.Atan2(planar.x, planar.z) * Mathf.Rad2Deg;
         Quaternion targetRot = Quaternion.Euler(0f, targetYaw, 0f);
 
-        // Smooth, framerate-independent rotation using angular speed
+        // Smooth rotation like real human movement
         rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, targetRot, turnSpeed * Time.fixedDeltaTime));
     }
 
