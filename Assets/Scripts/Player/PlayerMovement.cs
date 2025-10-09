@@ -1,5 +1,7 @@
+using Unity.Constants;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
@@ -7,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float maxSpeed = 6f;
     [SerializeField] private float accel = 20f;
     [SerializeField] private float turnSpeed = 540f;
+    [SerializeField] private float jumpSpeed = 15f;
 
     private Rigidbody _rb;
     private Animator _anim;
@@ -32,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
         float x = (Keyboard.current.dKey.isPressed ? 1 : 0) - (Keyboard.current.aKey.isPressed ? 1 : 0);
         float z = (Keyboard.current.wKey.isPressed ? 1 : 0) - (Keyboard.current.sKey.isPressed ? 1 : 0);
+        float y = Keyboard.current.spaceKey.isPressed ? jumpSpeed : 0;
         _inputDir = new Vector3(x, 0, z).normalized;
 
         var speed = new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z).magnitude;
@@ -42,6 +46,14 @@ public class PlayerMovement : MonoBehaviour
     {
         Move();
         Rotate();
+    }
+
+    private void Jump()
+    {
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, jumpSpeed, _rb.linearVelocity.z);
+        }
     }
 
     private void Move()
