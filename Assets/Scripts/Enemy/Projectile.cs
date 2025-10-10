@@ -3,8 +3,7 @@ using static Unity.Player.PlayerDamageTaken;
 
 namespace Unity.Enemy
 {
-    [RequireComponent(typeof(Rigidbody))]
-    [RequireComponent(typeof(Collider))]
+    [RequireComponent(typeof(Rigidbody)), RequireComponent(typeof(Collider))]
     public class Projectile : MonoBehaviour
     {
         public float speed = 100f;
