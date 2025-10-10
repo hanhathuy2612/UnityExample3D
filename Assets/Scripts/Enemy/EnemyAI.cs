@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Constants;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -44,6 +45,7 @@ namespace Unity.Enemy
         private void Awake()
         {
             if (agent == null) agent = GetComponent<NavMeshAgent>();
+            if (animator == null) animator = GetComponent<Animator>();
         }
 
         private void Start()
@@ -110,7 +112,8 @@ namespace Unity.Enemy
             // Animator example
             if (animator)
             {
-                animator.SetFloat("Speed", agent.velocity.magnitude);
+                Debug.Log("Setting animator speed to " + agent.velocity.magnitude);
+                animator.SetFloat(AnimatorParameters.Speed, agent.velocity.magnitude);
                 animator.SetBool("Dead", state == State.Dead);
             }
         }
@@ -161,7 +164,7 @@ namespace Unity.Enemy
             Debug.Log($"Enemy {gameObject.name} is attacking! Type: {(isRanged ? "Ranged" : "Melee")}");
 
             // Animator trigger
-            if (animator) animator.SetTrigger("Attack");
+            if (animator) animator.SetTrigger(AnimatorParameters.Attack);
 
             if (isRanged && projectilePrefab && projectileSpawnPoint)
             {
@@ -174,7 +177,7 @@ namespace Unity.Enemy
                 }
                 else
                 {
-                    // fallback physics shoot
+                    // fallback physics shoot   
                     Debug.Log($"Enemy {gameObject.name} is shooting projectile fallback!");
                     Rigidbody rb = p.GetComponent<Rigidbody>();
                     if (rb)
@@ -190,18 +193,8 @@ namespace Unity.Enemy
                 {
                     // Try to find PlayerHealth component first, then fallback to EnemyHealth
                     Debug.Log($"Enemy {gameObject.name} is dealing melee damage!");
-                    var ph = player.GetComponent<EnemyHealth>(); // assuming player uses EnemyHealth
-                    if (ph != null)
-                    {
-                        ph.TakeDamage(10); // tweak damage
-                        Debug.Log($"Enemy dealt 10 damage to player! Player health: {ph.currentHealth}");
-                    }
-                    else
-                    {
-                        // send message or interface - this will work with any component that has TakeDamage method
-                        player.SendMessage("TakeDamage", 10, SendMessageOptions.DontRequireReceiver);
-                        Debug.Log("Enemy dealt 10 damage to player via SendMessage");
-                    }
+                    player.SendMessage("TakeDamage", 5, SendMessageOptions.DontRequireReceiver);
+                    if (animator) animator.SetTrigger(AnimatorParameters.Punch);
                 }
             }
         }

@@ -6,5 +6,6 @@ namespace Unity.Constants
         public const string Jump = "Jump";
         public const string Punch = "Punch";
         public const string Kick = "Kick";
+        public const string Attack = "Attack";
     }
 }
