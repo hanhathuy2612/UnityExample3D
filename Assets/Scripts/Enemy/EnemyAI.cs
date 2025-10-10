@@ -53,6 +53,7 @@ namespace Unity.Enemy
             if (player == null)
             {
                 var p = GameObject.FindGameObjectWithTag("Player");
+                Debug.Log("Found player: " + p?.name);
                 if (p) player = p.transform;
             }
 
@@ -112,7 +113,6 @@ namespace Unity.Enemy
             // Animator example
             if (animator)
             {
-                Debug.Log("Setting animator speed to " + agent.velocity.magnitude);
                 animator.SetFloat(AnimatorParameters.Speed, agent.velocity.magnitude);
                 animator.SetBool("Dead", state == State.Dead);
             }

@@ -33,14 +33,16 @@ namespace Unity.Enemy
                     var q = new Queue<GameObject>();
                     for (var i = 0; i < poolSizePerPrefab; i++)
                     {
-                        var go = Instantiate(w.enemyPrefab);
-                        go.SetActive(false);
-                        q.Enqueue(go);
+                        var newEnemy = Instantiate(w.enemyPrefab);
+                        newEnemy.SetActive(false);
+                        q.Enqueue(newEnemy);
                     }
 
                     _pools[w.enemyPrefab] = q;
                 }
             }
+
+            Debug.Log("EnemySpawner Start with " + _pools.Count + " pools");
 
             // start first wave for demo
             StartCoroutine(RunWaves());
