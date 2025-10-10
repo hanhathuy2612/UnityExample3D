@@ -9,12 +9,6 @@ namespace Unity.Enemy
         Rigidbody rb;
         GameObject owner;
 
-        void Awake()
-        {
-            rb = GetComponent<Rigidbody>();
-            Destroy(gameObject, lifeTime);
-        }
-        
         public void Initialize(Vector3 targetPos, float speed, GameObject owner)
         {
             this.owner = owner;
@@ -22,8 +16,14 @@ namespace Unity.Enemy
             if (rb != null) rb.linearVelocity = dir * speed;
             transform.rotation = Quaternion.LookRotation(dir);
         }
-        
-        void OnTriggerEnter(Collider other)
+
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody>();
+            Destroy(gameObject, lifeTime);
+        }
+
+        private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject == owner) return; // ignore owner
             // apply damage to player
