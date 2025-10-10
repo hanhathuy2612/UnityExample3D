@@ -1,3 +1,4 @@
+using Unity.Constants;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,11 +10,13 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class PlayerMoveToCamera : MonoBehaviour
 {
-    [Header("Move")] [SerializeField] private float maxSpeed = 2f;
+    [Header("Move")][SerializeField] private float maxSpeed = 2f;
     [SerializeField] private float acceleration = 20f;
     [SerializeField] private float sprintMultiplier = 1.8f;
 
-    [Header("Rotate")] [Tooltip("Degrees per second - how fast player turns")] [SerializeField]
+    [Header("Rotate")]
+    [Tooltip("Degrees per second - how fast player turns")]
+    [SerializeField]
     private float turnSpeed = 360f;
 
     [Header("Jump")]
@@ -25,7 +28,8 @@ public class PlayerMoveToCamera : MonoBehaviour
     [SerializeField] private float jumpBufferTime = 0.1f; // early button press buffer
     [SerializeField] private LayerMask groundMask = ~0; // what counts as ground
 
-    [Header("Ground Check")] [SerializeField]
+    [Header("Ground Check")]
+    [SerializeField]
     private float groundCheckRadius = 0.2f;
 
     [SerializeField] private float groundCheckOffset = 0.1f;

@@ -1029,6 +1029,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 4306496640668333242, guid: 32269e0efceb843839c197548278a1d0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5026509875228803022, guid: 32269e0efceb843839c197548278a1d0, type: 3}
       propertyPath: player
       value: 
@@ -1045,6 +1049,10 @@ PrefabInstance:
       propertyPath: projectilePrefab
       value: 
       objectReference: {fileID: 1760374083143688696, guid: e34d43434a8d84897b0b6258a70830e9, type: 3}
+    - target: {fileID: 5026509875228803022, guid: 32269e0efceb843839c197548278a1d0, type: 3}
+      propertyPath: timeBetweenAttacks
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5026509875228803022, guid: 32269e0efceb843839c197548278a1d0, type: 3}
       propertyPath: projectileSpawnPoint
       value: 

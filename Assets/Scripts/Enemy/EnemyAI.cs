@@ -24,7 +24,7 @@ namespace Unity.Enemy
 
         [Header("Stats")] public float sightRadius = 12f;
         public float attackRange = 2f; // melee range
-        public float timeBetweenAttacks = 1.2f;
+        public float timeBetweenAttacks = 0.5f;
         public bool isRanged = false;
         public GameObject projectilePrefab; // for ranged
         public Transform projectileSpawnPoint;

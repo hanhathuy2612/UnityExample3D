@@ -30,6 +30,11 @@ public class PlayerTransition : MonoBehaviour
         {
             Punch();
         }
+
+        if (Keyboard.current.qKey.wasReleasedThisFrame)
+        {
+            Kick();
+        }
     }
 
     private void Punch()
@@ -46,5 +51,13 @@ public class PlayerTransition : MonoBehaviour
         var state = _animator.GetCurrentAnimatorStateInfo(0);
         if (state.IsName(AnimatorParameters.Jump)) return;
         _animator.SetTrigger(AnimatorParameters.Jump);
+    }
+
+    private void Kick()
+    {
+        if (_animator.IsInTransition(0)) return;
+        var state = _animator.GetCurrentAnimatorStateInfo(0);
+        if (state.IsName(AnimatorParameters.Kick)) return;
+        _animator.SetTrigger(AnimatorParameters.Kick);
     }
 }
