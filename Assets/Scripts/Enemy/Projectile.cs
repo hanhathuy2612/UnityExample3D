@@ -1,42 +1,77 @@
 ﻿using UnityEngine;
+using static Unity.Player.PlayerDamageTaken;
 
 namespace Unity.Enemy
 {
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(Collider))]
     public class Projectile : MonoBehaviour
     {
-        public float lifeTime = 6f;
+        public float speed = 100f;
+        public float lifeTime = 5f;
         public int damage = 10;
-        Rigidbody rb;
-        GameObject owner;
+        public GameObject owner;
 
-        public void Initialize(Vector3 targetPos, float speed, GameObject owner)
+        void Start()
         {
-            this.owner = owner;
-            Vector3 dir = (targetPos - transform.position).normalized;
-            if (rb != null) rb.linearVelocity = dir * speed;
-            transform.rotation = Quaternion.LookRotation(dir);
+            // Ensure collider is set as trigger
+            SetupTriggerCollider();
+
+            Destroy(gameObject, lifeTime);
         }
 
-        private void Awake()
+        private void SetupTriggerCollider()
         {
-            rb = GetComponent<Rigidbody>();
-            Destroy(gameObject, lifeTime);
+            Collider col = GetComponent<Collider>();
+
+            if (col != null && !col.isTrigger)
+            {
+                col.isTrigger = true;
+                Debug.Log("Projectile collider set as trigger");
+            }
+            else if (col == null)
+            {
+                Debug.LogError("Projectile is missing a Collider component! Please add one in the Inspector.");
+            }
+        }
+
+        void Update()
+        {
+            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        }
+
+        public void Initialize(Vector3 target, float speed, GameObject owner)
+        {
+            this.speed = speed;
+            this.owner = owner;
+            transform.LookAt(target);
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject == owner) return; // ignore owner
-            // apply damage to player
-            var ph = other.GetComponent<EnemyHealth>();
-            if (ph != null)
+            Debug.Log($"Projectile hit: {other.gameObject.name}");
+
+            if (other.gameObject == owner)
             {
-                ph.TakeDamage(damage);
+                Debug.Log("Projectile ignored owner collision");
+                return;
             }
-            else
+
+            if (IsPlayer(other))
             {
-                other.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
+                var data = new DamageTakenData()
+                {
+                    amount = damage,
+                    attacker = this.owner
+                };
+                other.SendMessage("TakeDamage", data, SendMessageOptions.DontRequireReceiver);
             }
-            Destroy(gameObject);
+        }
+
+        private bool IsPlayer(Collider other)
+        {
+            return other.gameObject.layer == LayerMask.NameToLayer("Player") || other.gameObject.tag == "Player";
         }
     }
+
 }

@@ -74,6 +74,7 @@ namespace Unity.Enemy
             float distToPlayer = Vector3.Distance(transform.position, player.position);
 
             // State decisions
+            State previousState = state;
             if (distToPlayer <= attackRange)
             {
                 state = State.Attack;
@@ -85,6 +86,12 @@ namespace Unity.Enemy
             else
             {
                 state = State.Patrol;
+            }
+
+            // Debug state changes
+            if (previousState != state)
+            {
+                Debug.Log($"Enemy {gameObject.name} changed state from {previousState} to {state}. Distance to player: {distToPlayer:F2}");
             }
 
             switch (state)
@@ -132,6 +139,13 @@ namespace Unity.Enemy
 
         private void AttackUpdate(float distToPlayer)
         {
+            // Check if player moved out of attack range
+            if (distToPlayer > attackRange)
+            {
+                // Player moved away, go back to chase
+                return;
+            }
+
             agent.isStopped = true;
             transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z)); // face player
 
@@ -144,6 +158,8 @@ namespace Unity.Enemy
 
         private void DoAttack()
         {
+            Debug.Log($"Enemy {gameObject.name} is attacking! Type: {(isRanged ? "Ranged" : "Melee")}");
+
             // Animator trigger
             if (animator) animator.SetTrigger("Attack");
 
@@ -153,11 +169,13 @@ namespace Unity.Enemy
                 Projectile proj = p.GetComponent<Projectile>();
                 if (proj != null)
                 {
+                    Debug.Log($"Enemy {gameObject.name} is shooting projectile!");
                     proj.Initialize(player.position, projectileSpeed, gameObject);
                 }
                 else
                 {
                     // fallback physics shoot
+                    Debug.Log($"Enemy {gameObject.name} is shooting projectile fallback!");
                     Rigidbody rb = p.GetComponent<Rigidbody>();
                     if (rb)
                         rb.linearVelocity = (player.position - projectileSpawnPoint.position).normalized *
@@ -170,17 +188,19 @@ namespace Unity.Enemy
                 float dist = Vector3.Distance(transform.position, player.position);
                 if (dist <= attackRange + 0.5f)
                 {
-                    var ph = player
-                        .GetComponent<
-                            EnemyHealth>(); // if player uses same health script (or replace with your PlayerHealth)
+                    // Try to find PlayerHealth component first, then fallback to EnemyHealth
+                    Debug.Log($"Enemy {gameObject.name} is dealing melee damage!");
+                    var ph = player.GetComponent<EnemyHealth>(); // assuming player uses EnemyHealth
                     if (ph != null)
                     {
                         ph.TakeDamage(10); // tweak damage
+                        Debug.Log($"Enemy dealt 10 damage to player! Player health: {ph.currentHealth}");
                     }
                     else
                     {
-                        // send message or interface
+                        // send message or interface - this will work with any component that has TakeDamage method
                         player.SendMessage("TakeDamage", 10, SendMessageOptions.DontRequireReceiver);
+                        Debug.Log("Enemy dealt 10 damage to player via SendMessage");
                     }
                 }
             }
