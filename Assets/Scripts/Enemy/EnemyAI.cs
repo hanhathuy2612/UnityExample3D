@@ -2,6 +2,7 @@
 using Unity.Constants;
 using UnityEngine;
 using UnityEngine.AI;
+using static Unity.Player.PlayerDamageTaken;
 
 namespace Unity.Enemy
 {
@@ -193,7 +194,12 @@ namespace Unity.Enemy
                 {
                     // Try to find PlayerHealth component first, then fallback to EnemyHealth
                     Debug.Log($"Enemy {gameObject.name} is dealing melee damage!");
-                    player.SendMessage("TakeDamage", 5, SendMessageOptions.DontRequireReceiver);
+                    var damageData = new DamageTakenData()
+                    {
+                        amount = 5,
+                        attacker = gameObject
+                    };
+                    player.SendMessage("TakeDamage", damageData, SendMessageOptions.DontRequireReceiver);
                     if (animator) animator.SetTrigger(AnimatorParameters.Punch);
                 }
             }
