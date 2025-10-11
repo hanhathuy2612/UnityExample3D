@@ -5,7 +5,7 @@ namespace Unity.Player
 {
     public class PlayerDamageTaken : MonoBehaviour
     {
-        [SerializeField] private HealthBarWorld healthBar;
+        [SerializeField] private HealthBar healthBar;
 
         public class DamageTakenData
         {
@@ -15,7 +15,6 @@ namespace Unity.Player
 
         public void TakeDamage(DamageTakenData data)
         {
-            Debug.Log($"Player took {data.amount} damage from {data.attacker.name}");
             healthBar.SetHealth(data.amount);
         }
     }

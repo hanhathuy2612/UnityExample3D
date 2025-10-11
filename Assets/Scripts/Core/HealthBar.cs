@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Unity.Core
 {
-    public class HealthBarWorld : MonoBehaviour
+    public class HealthBar : MonoBehaviour
     {
 
         [SerializeField] private float smoothSpeed = 5f;

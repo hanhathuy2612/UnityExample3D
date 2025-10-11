@@ -42,8 +42,6 @@ namespace Unity.Enemy
                 }
             }
 
-            Debug.Log("EnemySpawner Start with " + _pools.Count + " pools");
-
             // start first wave for demo
             StartCoroutine(RunWaves());
         }

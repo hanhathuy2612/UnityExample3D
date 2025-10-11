@@ -58,11 +58,10 @@ namespace Unity.Enemy
             if (_collider != null && !_collider.isTrigger)
             {
                 _collider.isTrigger = true;
-                Debug.Log("Projectile collider set as trigger");
             }
             else if (_collider == null)
             {
-                Debug.LogError("Projectile is missing a Collider component! Please add one in the Inspector.");
+                // Debug.LogError("Projectile is missing a Collider component! Please add one in the Inspector.");
             }
         }
 

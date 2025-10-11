@@ -54,7 +54,6 @@ namespace Unity.Enemy
             if (player == null)
             {
                 var p = GameObject.FindGameObjectWithTag("Player");
-                Debug.Log("Found player: " + p?.name);
                 if (p) player = p.transform;
             }
 
@@ -95,7 +94,7 @@ namespace Unity.Enemy
             // Debug state changes
             if (previousState != state)
             {
-                Debug.Log($"Enemy {gameObject.name} changed state from {previousState} to {state}. Distance to player: {distToPlayer:F2}");
+                // Debug.Log($"Enemy {gameObject.name} changed state from {previousState} to {state}. Distance to player: {distToPlayer:F2}");
             }
 
             switch (state)
@@ -162,8 +161,6 @@ namespace Unity.Enemy
 
         private void DoAttack()
         {
-            Debug.Log($"Enemy {gameObject.name} is attacking! Type: {(isRanged ? "Ranged" : "Melee")}");
-
             // Animator trigger
             if (animator) animator.SetTrigger(AnimatorParameters.Attack);
 
@@ -173,13 +170,10 @@ namespace Unity.Enemy
                 Projectile proj = p.GetComponent<Projectile>();
                 if (proj != null)
                 {
-                    Debug.Log($"Enemy {gameObject.name} is shooting projectile!");
                     proj.Initialize(player.position, projectileSpeed, gameObject);
                 }
                 else
                 {
-                    // fallback physics shoot   
-                    Debug.Log($"Enemy {gameObject.name} is shooting projectile fallback!");
                     Rigidbody rb = p.GetComponent<Rigidbody>();
                     if (rb)
                         rb.linearVelocity = (player.position - projectileSpawnPoint.position).normalized *
@@ -193,7 +187,6 @@ namespace Unity.Enemy
                 if (dist <= attackRange + 0.5f)
                 {
                     // Try to find PlayerHealth component first, then fallback to EnemyHealth
-                    Debug.Log($"Enemy {gameObject.name} is dealing melee damage!");
                     var damageData = new DamageTakenData()
                     {
                         amount = 5,
