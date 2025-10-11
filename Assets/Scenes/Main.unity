@@ -934,28 +934,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1030578850}
     - target: {fileID: 1920060480698345459, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
-      propertyPath: enemyMask.m_Bits
-      value: 256
-      objectReference: {fileID: 0}
-    - target: {fileID: 1920060480698345459, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
-      propertyPath: requireLineOfSight
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1920060480698345459, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
       propertyPath: instantTurnOnAttack
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4924531298222293270, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.8371642
-      objectReference: {fileID: 0}
-    - target: {fileID: 4924531298222293270, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.8371642
-      objectReference: {fileID: 0}
-    - target: {fileID: 4924531298222293270, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.8371642
       objectReference: {fileID: 0}
     - target: {fileID: 4924531298222293270, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -995,14 +975,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4924531298222293270, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5074074132873226820, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5074074132873226820, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
-      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5700611218635824044, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
