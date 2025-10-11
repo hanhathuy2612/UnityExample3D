@@ -1,10 +1,11 @@
+using Unity.Core;
 using UnityEngine;
 
 namespace Unity.Player
 {
     public class PlayerDamageTaken : MonoBehaviour
     {
-        [SerializeField] private HealthBar healthBar;
+        [SerializeField] private HealthBarWorld healthBar;
 
         public class DamageTakenData
         {
