@@ -17,6 +17,9 @@ namespace Unity.Player
         public float turnSpeedDegPerSec = 720f;
         public bool instantTurnOnAttack = false;
 
+        [Header("Damage")]
+        public int damage = 30;
+
         private void Start()
         {
             turnPivot = transform;
@@ -91,6 +94,8 @@ namespace Unity.Player
                 StopAllCoroutines();
                 StartCoroutine(RotateTowards(look));
             }
+
+            target.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
         }
 
         IEnumerator RotateTowards(Quaternion targetRot)

@@ -5,17 +5,18 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerTransition : MonoBehaviour
 {
+    public float timeBetweenPunches = 0.5f;
+    public float timeBetweenKicks = 0.5f;
+    public float timeBetweenJumps = 0.5f;
+
     private Animator _animator;
     private Rigidbody _rigidbody;
 
     private float _lastPunchTime;
-    private float _timeBetweenPunches = 0.5f;
 
     private float _lastKickTime;
-    private float _timeBetweenKicks = 0.5f;
 
     private float _lastJumpTime;
-    private float _timeBetweenJumps = 0.5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
@@ -48,21 +49,21 @@ public class PlayerTransition : MonoBehaviour
 
     private void Punch()
     {
-        if (Time.time - _lastPunchTime < _timeBetweenPunches) return;
+        if (Time.time - _lastPunchTime < timeBetweenPunches) return;
         _lastPunchTime = Time.time;
         _animator.SetTrigger(AnimatorParameters.Punch);
     }
 
     private void Jump()
     {
-        if (Time.time - _lastJumpTime < _timeBetweenJumps) return;
+        if (Time.time - _lastJumpTime < timeBetweenJumps) return;
         _lastJumpTime = Time.time;
         _animator.SetTrigger(AnimatorParameters.Jump);
     }
 
     private void Kick()
     {
-        if (Time.time - _lastKickTime < _timeBetweenKicks) return;
+        if (Time.time - _lastKickTime < timeBetweenKicks) return;
         _lastKickTime = Time.time;
         _animator.SetTrigger(AnimatorParameters.Kick);
     }

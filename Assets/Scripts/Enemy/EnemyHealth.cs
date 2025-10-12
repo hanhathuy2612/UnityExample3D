@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Unity.Enemy
 {
@@ -27,11 +28,11 @@ namespace Unity.Enemy
 
         private void Die()
         {
+            Debug.Log("Enemy Died");
             OnDeath?.Invoke();
-            // optionally disable collider & navmesh agent here
             var col = GetComponent<Collider>();
             if (col) col.enabled = false;
-            var agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+            var agent = GetComponent<NavMeshAgent>();
             if (agent) agent.enabled = false;
         }
     }

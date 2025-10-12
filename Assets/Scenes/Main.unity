@@ -878,7 +878,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3260486082744794924, guid: f968d09ef59e19642b4073a2d389b001, type: 3}
       propertyPath: poolSizePerPrefab
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3260486082744794924, guid: f968d09ef59e19642b4073a2d389b001, type: 3}
       propertyPath: 'spawnPoints.Array.data[0]'
@@ -980,6 +980,14 @@ PrefabInstance:
     - target: {fileID: 5700611218635824044, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
       propertyPath: m_Name
       value: Warrier
+      objectReference: {fileID: 0}
+    - target: {fileID: 7149991528488136234, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7149991528488136234, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9161389539306459325, guid: e6d0a56a0be96468fad51a2f0c37142f, type: 3}
       propertyPath: offset.y

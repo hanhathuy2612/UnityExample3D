@@ -21,6 +21,7 @@ namespace Unity.Enemy
         public int poolSizePerPrefab = 10;
 
         private readonly Dictionary<GameObject, Queue<GameObject>> _pools = new();
+        private readonly Dictionary<GameObject, EnemyHealth> _enemyHealths = new();
 
         private void Start()
         {
@@ -28,49 +29,49 @@ namespace Unity.Enemy
             foreach (var w in waves)
             {
                 if (w.enemyPrefab == null) continue;
-                if (!_pools.ContainsKey(w.enemyPrefab))
-                {
-                    var q = new Queue<GameObject>();
-                    for (var i = 0; i < poolSizePerPrefab; i++)
-                    {
-                        var newEnemy = Instantiate(w.enemyPrefab);
-                        newEnemy.SetActive(false);
-                        q.Enqueue(newEnemy);
-                    }
+                if (_pools.ContainsKey(w.enemyPrefab)) continue;
 
-                    _pools[w.enemyPrefab] = q;
+                var q = new Queue<GameObject>();
+                for (var i = 0; i < poolSizePerPrefab; i++)
+                {
+                    var newEnemy = Instantiate(w.enemyPrefab);
+                    newEnemy.SetActive(false);
+                    q.Enqueue(newEnemy);
+                    _enemyHealths[newEnemy] = newEnemy.GetComponent<EnemyHealth>();
                 }
+
+                _pools[w.enemyPrefab] = q;
             }
 
             // start first wave for demo
             StartCoroutine(RunWaves());
         }
 
-        IEnumerator RunWaves()
+        private IEnumerator RunWaves()
         {
-            for (int i = 0; i < waves.Length; i++)
+            foreach (var wave in waves)
             {
-                yield return StartCoroutine(SpawnWave(waves[i]));
+                yield return StartCoroutine(SpawnWave(wave));
                 // wait between waves if you want
                 yield return new WaitForSeconds(3f);
             }
         }
 
-        IEnumerator SpawnWave(SpawnWaveType wave)
+        private IEnumerator SpawnWave(SpawnWaveType wave)
         {
-            for (int i = 0; i < wave.count; i++)
+            for (var i = 0; i < wave.count; i++)
             {
                 Spawn(wave.enemyPrefab);
                 yield return new WaitForSeconds(wave.spawnRate);
             }
         }
 
-        void Spawn(GameObject prefab)
+        private void Spawn(GameObject prefab)
         {
-            if (prefab == null || spawnPoints.Length == 0) return;
+            if (!prefab || spawnPoints.Length == 0) return;
 
-            GameObject enemy = GetFromPool(prefab);
-            if (enemy == null)
+            var enemy = GetFromPool(prefab);
+            if (!enemy)
             {
                 enemy = Instantiate(prefab);
             }
@@ -81,28 +82,17 @@ namespace Unity.Enemy
             enemy.SetActive(true);
 
             // reset health if using EnemyHealth
-            var eh = enemy.GetComponent<EnemyHealth>();
-            if (eh != null) eh.currentHealth = eh.maxHealth;
+            _enemyHealths.TryGetValue(enemy, out var enemyHealth);
+            if (enemyHealth) enemyHealth.currentHealth = enemyHealth.maxHealth;
         }
 
-        GameObject GetFromPool(GameObject prefab)
+        private GameObject GetFromPool(GameObject prefab)
         {
-            if (!_pools.ContainsKey(prefab)) return null;
+            if (!_pools.TryGetValue(prefab, out _)) return null;
             var q = _pools[prefab];
             if (q.Count == 0) return null;
             var go = q.Dequeue();
             return go;
-        }
-
-        public void ReturnToPool(GameObject prefab, GameObject instance)
-        {
-            instance.SetActive(false);
-            if (!_pools.ContainsKey(prefab))
-            {
-                _pools[prefab] = new Queue<GameObject>();
-            }
-
-            _pools[prefab].Enqueue(instance);
         }
     }
 }

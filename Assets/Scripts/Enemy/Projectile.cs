@@ -107,13 +107,7 @@ namespace Unity.Enemy
 
         private void DealDamage(Collider target)
         {
-            var damageData = new DamageTakenData
-            {
-                amount = damage,
-                attacker = owner
-            };
-
-            target.SendMessage("TakeDamage", damageData, SendMessageOptions.DontRequireReceiver);
+            target.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
 
             // Destroy or deactivate projectile after dealing damage
             if (useObjectPooling)

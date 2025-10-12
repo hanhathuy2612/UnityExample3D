@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.Constants;
+using Unity.Core;
 using UnityEngine;
 using UnityEngine.AI;
 using static Unity.Player.PlayerDamageTaken;
@@ -23,6 +24,7 @@ namespace Unity.Enemy
         public Transform player; // set in inspector or find in Start
         public NavMeshAgent agent;
         public Animator animator; // optional
+        public int enemyDamage = 5;
 
         [Header("Stats")] public float sightRadius = 12f;
         public float attackRange = 2f; // melee range
@@ -63,7 +65,7 @@ namespace Unity.Enemy
             if (patrolPoints == null || patrolPoints.Length == 0)
             {
                 // fallback: stay in place
-                patrolPoints = new Transform[] { transform };
+                patrolPoints = new[] { transform };
             }
 
             GoToNextPatrolPoint();
@@ -186,30 +188,22 @@ namespace Unity.Enemy
                 float dist = Vector3.Distance(transform.position, player.position);
                 if (dist <= attackRange + 0.5f)
                 {
-                    // Try to find PlayerHealth component first, then fallback to EnemyHealth
-                    var damageData = new DamageTakenData()
-                    {
-                        amount = 5,
-                        attacker = gameObject
-                    };
-                    player.SendMessage("TakeDamage", damageData, SendMessageOptions.DontRequireReceiver);
+                    player.SendMessage("TakeDamage", enemyDamage, SendMessageOptions.DontRequireReceiver);
                     if (animator) animator.SetTrigger(AnimatorParameters.Punch);
                 }
             }
         }
 
-        void HandleDeath()
+        private void HandleDeath()
         {
             state = State.Dead;
             agent.isStopped = true;
             agent.ResetPath();
-            // disable colliders, play death anim, etc.
             if (animator) animator.SetTrigger("Die");
-            // destroy after some time
             Destroy(gameObject, 6f);
         }
 
-        void OnDrawGizmosSelected()
+        private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, sightRadius);

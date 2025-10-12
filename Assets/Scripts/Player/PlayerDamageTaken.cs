@@ -3,19 +3,21 @@ using UnityEngine;
 
 namespace Unity.Player
 {
-    public class PlayerDamageTaken : MonoBehaviour
+    public class PlayerDamageTaken : IDamageTaken
     {
-        [SerializeField] private HealthBar healthBar;
-
-        public class DamageTakenData
+        public override void TakeDamage(int amount)
         {
-            public int amount;
-            public GameObject attacker;
-        }
+            if (healthBar.GetHealth() <= 0f)
+            {
+                return;
+            }
 
-        public void TakeDamage(DamageTakenData data)
-        {
-            healthBar.SetHealth(data.amount);
+            var currentHealth = healthBar.SetHealth(amount);
+
+            if (currentHealth <= 0f)
+            {
+                gameObject.SendMessage("Die", SendMessageOptions.DontRequireReceiver);
+            }
         }
     }
 }
