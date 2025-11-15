@@ -1,19 +1,16 @@
 ﻿using UnityEngine;
-using static Unity.Player.PlayerDamageTaken;
 
 namespace Unity.Enemy
 {
     [RequireComponent(typeof(Rigidbody)), RequireComponent(typeof(Collider))]
     public class Projectile : MonoBehaviour
     {
-        [Header("Projectile Settings")]
-        public float speed = 100f;
+        [Header("Projectile Settings")] public float speed = 100f;
         public float lifeTime = 5f;
         public int damage = 10;
         public GameObject owner;
 
-        [Header("Performance")]
-        public LayerMask playerLayer = 1; // Default layer
+        [Header("Performance")] public LayerMask playerLayer = 1; // Default layer
         public bool useLayerCheck = true;
         public bool useObjectPooling = false; // Enable for object pooling
 
@@ -28,7 +25,14 @@ namespace Unity.Enemy
         // Object pooling
         private bool _isActive = true;
 
-        void Start()
+        public void Initialize(Vector3 target, float speed, GameObject owner)
+        {
+            this.speed = speed;
+            this.owner = owner;
+            transform.LookAt(target);
+        }
+
+        private void Start()
         {
             // Cache components once
             CacheComponents();
@@ -36,7 +40,7 @@ namespace Unity.Enemy
             // Setup collider as trigger
             SetupTriggerCollider();
 
-            // Destroy after lifetime
+            // Destroy after a lifetime
             Destroy(gameObject, lifeTime);
         }
 
@@ -65,21 +69,14 @@ namespace Unity.Enemy
             }
         }
 
-        void Update()
+        private void Update()
         {
             // Early exit if not active (for object pooling)
             if (!_isActive) return;
 
             // Use cached transform and multiply by Time.deltaTime once
-            float deltaTime = Time.deltaTime;
+            var deltaTime = Time.deltaTime;
             transform.Translate(Vector3.forward * speed * deltaTime);
-        }
-
-        public void Initialize(Vector3 target, float speed, GameObject owner)
-        {
-            this.speed = speed;
-            this.owner = owner;
-            transform.LookAt(target);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -132,5 +129,4 @@ namespace Unity.Enemy
             gameObject.SetActive(true);
         }
     }
-
 }
